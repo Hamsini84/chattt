@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messaged</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <br>
+        <div class="jumbotron">
+            <h1 class="display-4"> Send Message</h1>
+            <br>
+            <input id = "name" class="form-control" placeholder="Name">
+            <br>
+            <textarea id = "message" class="form-control" placeholder="Message"></textarea>
+            <br>
+            <button id="send" class="btn btn-success">Send</button>
+        </div>
+        <div id="messages">
+
+        </div>
+
+
+    </div>
+    <script>
+        var Socket = io()
+        $(() => {
+            $("#send").click(() => {
+                var message = {name: $("#name").val(), message: $("#message").val()}
+                postMessage(message)
+            }) 
+            getMessages() 
+        })
+
+        Socket.on('message', addMessages)
+
+        function addMessages(message){
+          $("#messages").append(`<h4> ${message.name} </h4> <p> ${message.message}</p>`)  
+        }
+        function getMessages() {
+
+            $.get('http://localhost:3000/messages', (data) => {
+                data.forEach(addMessages);
+            })
+        }
+
+        function postMessage(message) {
+
+            $.post('http://localhost:3000/messages', message)
+               
+        }
+
+    </script>
+    
+</body>
+</html>
